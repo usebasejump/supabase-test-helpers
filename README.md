@@ -5,6 +5,13 @@ A collection of functions designed to make testing Supabase projects easier.
 - [Supabase](https://supabase.com)
 - [pgTAP](https://pgtap.org/)
 
+## Installation
+Copy the contents of `supabase_test_helpers.sql` into your supabase query interface and run it.
+
+Alternatively, you can generate a migration file and add it there.
+
+## Test Helpers
+
 <!-- include: supabase_test_helpers.sql -->
 
 ### tests.rls_enabled(testing_schema text)
@@ -22,7 +29,7 @@ Example:
   ROLLBACK;
 ```
 
-## tests.rls_enabled(testing_schema text, testing_table text)
+### tests.rls_enabled(testing_schema text, testing_table text)
 pgTAP function to check if RLS is enabled on a specific table
 
 Parameters:

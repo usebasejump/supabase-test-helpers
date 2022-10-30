@@ -1,10 +1,6 @@
 # Supabase Test Helpers
 A collection of functions designed to make testing Supabase projects easier.
 
-## Dependencies
-- [Supabase](https://supabase.com)
-- [pgTAP](https://pgtap.org/)
-
 ## Installation
 Copy the contents of `supabase_test_helpers.sql` into your supabase query interface and run it.
 

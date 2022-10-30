@@ -1,0 +1,19 @@
+name: Update README
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install doctoc and mdextract
+        run: npm install -g doctoc mdextract
+      - name: Update README
+        run: |
+          mdextract --update README.md
+          doctoc --github --notitle README.md
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: README.md
+          commit_message: Apply README changes

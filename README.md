@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Supabase Test Helpers](#supabase-test-helpers)
+  - [Installation](#installation)
+  - [Contributing](#contributing)
+  - [Test Helpers](#test-helpers)
+    - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
+    - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Supabase Test Helpers
 A collection of functions designed to make testing Supabase projects easier.
 

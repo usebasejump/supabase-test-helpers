@@ -1,5 +1,5 @@
 -- Enable pgTAP if it's not already enabled
--- create extension if not exists pgtap with schema extensions;
+create extension if not exists pgtap with schema extensions;
 
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data

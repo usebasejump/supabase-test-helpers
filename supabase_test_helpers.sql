@@ -4,14 +4,13 @@ create extension if not exists pgtap with schema extensions;
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
 CREATE SCHEMA IF NOT EXISTS tests;
--- Don't allow public to execute any functions in the tests schema
-REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA tests FROM PUBLIC;
 
 -- anon and authenticated should have access to tests schema
 GRANT USAGE ON SCHEMA tests TO anon, authenticated;
--- anon and authenticated users should have execute on tests schema functions
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA tests TO anon, authenticated;
-
+-- Don't allow public to execute any functions in the tests schema
+ALTER DEFAULT PRIVILEGES IN SCHEMA tests REVOKE EXECUTE ON FUNCTIONS FROM public;
+-- Grant execute to anon and authenticated for testing purposes
+ALTER DEFAULT PRIVILEGES IN SCHEMA tests GRANT EXECUTE ON FUNCTIONS TO anon, authenticated;
 
 /**
     * ### tests.create_supabase_user(identifier text, email text, phone text)
@@ -25,7 +24,7 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA tests TO anon, authenticated;
     * - `phone` - (Optional) The phone number of the user
     *
     * Returns:
-    * - `user_id` - The ID of the user in the `auth.users` table
+    * - `user_id` - The UUID of the user in the `auth.users` table
     *
     * Example:
     * ```sql
@@ -60,11 +59,8 @@ $$ LANGUAGE plpgsql;
     * Parameters:
     * - `identifier` - The unique identifier for the user
     *
-    * Returns as `jsonb` with the following:
-    * - `id` - The ID of the user in the `auth.users` table
-    * - `email` - The email address of the user
-    * - `phone` - The phone number of the user
-    * - `identifier` - The user's unique identifier
+    * Returns:
+    * - `user_id` - The UUID of the user in the `auth.users` table
     *
     * Example:
     * ```sql
@@ -72,18 +68,18 @@ $$ LANGUAGE plpgsql;
     * ```
  */
 CREATE OR REPLACE FUNCTION tests.get_supabase_user(identifier text)
-RETURNS json
+RETURNS uuid
 SECURITY DEFINER
 SET search_path = tests, auth, public, pg_temp
 AS $$
     DECLARE
-        supabase_user record;
+        supabase_user uuid;
     BEGIN
-        SELECT id, email, phone, raw_user_meta_data ->> 'test_identifier' as identifier FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1 INTO supabase_user;
+        SELECT id into supabase_user FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1;
         if supabase_user is null then
             RAISE EXCEPTION 'User with identifier % not found', identifier;
         end if;
-        RETURN to_json(supabase_user);
+        RETURN supabase_user;
     END;
 $$ LANGUAGE plpgsql;
 

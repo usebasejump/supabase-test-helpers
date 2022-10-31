@@ -40,7 +40,7 @@ Parameters:
 - `phone` - (Optional) The phone number of the user
 
 Returns:
-- `user_id` - The ID of the user in the `auth.users` table
+- `user_id` - The UUID of the user in the `auth.users` table
 
 Example:
 ```sql
@@ -55,11 +55,8 @@ Returns the user info for a user created with `tests.create_supabase_user`.
 Parameters:
 - `identifier` - The unique identifier for the user
 
-Returns as `jsonb` with the following:
-- `id` - The ID of the user in the `auth.users` table
-- `email` - The email address of the user
-- `phone` - The phone number of the user
-- `identifier` - The user's unique identifier
+Returns:
+- `user_id` - The UUID of the user in the `auth.users` table
 
 Example:
 ```sql

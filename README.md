@@ -7,7 +7,12 @@ Copy the contents of `supabase_test_helpers.sql` into your supabase query interf
 Alternatively, you can generate a migration file and add it there.
 
 ## Contributing
-Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute, please add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to `supabase_test_helpers.sql` and submit a PR. Comments should be added above each function, follow the examples in the file.
+Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
+
+* Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to `supabase_test_helpers.sql`
+* Comments should be added above each function, follow the examples in the file.
+* Add tests for your functions in `tests/XX-your-function-name.sql`
+* Submit a PR
 
 ## Test Helpers
 The following is auto-generated off of comments in the `supabase_test_helpers.sql` file. Any changes added to the README directly will be overwritten.

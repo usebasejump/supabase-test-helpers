@@ -4,6 +4,89 @@ create extension if not exists pgtap with schema extensions;
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
 CREATE SCHEMA IF NOT EXISTS tests;
+-- Don't allow public to execute any functions in the tests schema
+REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA tests FROM PUBLIC;
+
+-- anon and authenticated should have access to tests schema
+GRANT USAGE ON SCHEMA tests TO anon, authenticated;
+-- anon and authenticated users should have execute on tests schema functions
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA tests TO anon, authenticated;
+
+
+/**
+    * ### tests.create_supabase_user(identifier text, email text, phone text)
+    *
+    * Creates a new user in the `auth.users` table.
+    * You can recall a user's info by using `tests.get_supabase_user(identifier text)`.
+    *
+    * Parameters:
+    * - `identifier` - A unique identifier for the user. We recommend you keep it memorable like "test_owner" or "test_member"
+    * - `email` - (Optional) The email address of the user
+    * - `phone` - (Optional) The phone number of the user
+    *
+    * Returns:
+    * - `user_id` - The ID of the user in the `auth.users` table
+    *
+    * Example:
+    * ```sql
+    *   SELECT tests.create_supabase_user('test_owner');
+    *   SELECT tests.create_supabase_user('test_member', 'member@test.com', '555-555-5555');
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.create_supabase_user(identifier text, email text default null, phone text default null)
+RETURNS uuid
+    SECURITY DEFINER
+    SET search_path = tests, auth, public, pg_temp
+AS $$
+DECLARE
+    user_id uuid;
+BEGIN
+
+    -- create the user
+    user_id := extensions.uuid_generate_v4();
+    INSERT INTO auth.users (id, email, phone, raw_user_meta_data)
+    VALUES (user_id, coalesce(email, concat(user_id, '@test.com')), phone, json_build_object('test_identifier', identifier))
+    RETURNING id INTO user_id;
+
+    RETURN user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+/**
+    * ### tests.get_supabase_user(identifier text)
+    *
+    * Returns the user info for a user created with `tests.create_supabase_user`.
+    *
+    * Parameters:
+    * - `identifier` - The unique identifier for the user
+    *
+    * Returns as `jsonb` with the following:
+    * - `id` - The ID of the user in the `auth.users` table
+    * - `email` - The email address of the user
+    * - `phone` - The phone number of the user
+    * - `identifier` - The user's unique identifier
+    *
+    * Example:
+    * ```sql
+    *   SELECT posts where posts.user_id = tests.get_supabase_user('test_owner') -> 'id';
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.get_supabase_user(identifier text)
+RETURNS json
+SECURITY DEFINER
+SET search_path = tests, auth, public, pg_temp
+AS $$
+    DECLARE
+        supabase_user record;
+    BEGIN
+        SELECT id, email, phone, raw_user_meta_data ->> 'test_identifier' as identifier FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1 INTO supabase_user;
+        if supabase_user is null then
+            RAISE EXCEPTION 'User with identifier % not found', identifier;
+        end if;
+        RETURN to_json(supabase_user);
+    END;
+$$ LANGUAGE plpgsql;
+
 /**
 * ### tests.rls_enabled(testing_schema text)
 * pgTAP function to check if RLS is enabled on all tables in a provided schema

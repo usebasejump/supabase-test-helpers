@@ -22,6 +22,8 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 
 - [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
 - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
+- [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
+- [tests.clear_authentication()](#testsclear_authentication)
 - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
 - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
 
@@ -61,6 +63,34 @@ Returns:
 Example:
 ```sql
   SELECT posts where posts.user_id = tests.get_supabase_user('test_owner') -> 'id';
+```
+
+### tests.authenticate_as(identifier text)
+  Authenticates as a user created with `tests.create_supabase_user`.
+
+Parameters:
+- `identifier` - The unique identifier for the user
+
+Returns:
+- `void`
+
+Example:
+```sql
+  SELECT tests.create_supabase_user('test_owner');
+  SELECT tests.authenticate_as('test_owner');
+```
+
+### tests.clear_authentication()
+  Clears out the authentication and sets role to anon
+
+Returns:
+- `void`
+
+Example:
+```sql
+  SELECT tests.create_supabase_user('test_owner');
+  SELECT tests.authenticate_as('test_owner');
+  SELECT tests.clear_authentication();
 ```
 
 ### tests.rls_enabled(testing_schema text)

@@ -84,6 +84,61 @@ AS $$
 $$ LANGUAGE plpgsql;
 
 /**
+    * ### tests.authenticate_as(identifier text)
+    *   Authenticates as a user created with `tests.create_supabase_user`.
+    *
+    * Parameters:
+    * - `identifier` - The unique identifier for the user
+    *
+    * Returns:
+    * - `void`
+    *
+    * Example:
+    * ```sql
+    *   SELECT tests.create_supabase_user('test_owner');
+    *   SELECT tests.authenticate_as('test_owner');
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
+    RETURNS void AS $$
+    -- load the user by the authenticator
+DECLARE
+        auth_data text;
+BEGIN
+    SELECT json_build_object('sub', id, 'aud', 'authenticated', 'role', 'authenticated', 'email', email)::text into auth_data FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1;
+
+    if auth_data is null then
+        RAISE EXCEPTION 'User with identifier % not found', identifier;
+    end if;
+
+    set local role authenticated;
+    set local "request.jwt.claims" to auth_data;
+END
+$$ LANGUAGE plpgsql;
+
+/**
+    * ### tests.clear_authentication()
+    *   Clears out the authentication and sets role to anon
+    *
+    * Returns:
+    * - `void`
+    *
+    * Example:
+    * ```sql
+    *   SELECT tests.create_supabase_user('test_owner');
+    *   SELECT tests.authenticate_as('test_owner');
+    *   SELECT tests.clear_authentication();
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.clear_authentication()
+    RETURNS void AS $$
+BEGIN
+    set local role anon;
+    set local "request.jwt.claims" to '';
+END
+$$ LANGUAGE plpgsql;
+
+/**
 * ### tests.rls_enabled(testing_schema text)
 * pgTAP function to check if RLS is enabled on all tables in a provided schema
 *

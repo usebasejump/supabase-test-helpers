@@ -4,6 +4,9 @@ A collection of functions designed to make testing Supabase projects easier.
 ## Installation
 Copy the contents of `supabase_test_helpers.sql` into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run.
 
+## Writing tests
+Check out the docs below for available helpers. To view a comprehensive example, check out our [blog tests](tests/04-blog-example.sql).
+
 ## Contributing
 Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
 

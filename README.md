@@ -2,9 +2,7 @@
 A collection of functions designed to make testing Supabase projects easier.
 
 ## Installation
-Copy the contents of `supabase_test_helpers.sql` into your supabase query interface and run it.
-
-Alternatively, you can generate a migration file and add it there.
+Copy the contents of `supabase_test_helpers.sql` into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run.
 
 ## Contributing
 Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:

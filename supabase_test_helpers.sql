@@ -35,7 +35,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA tests GRANT EXECUTE ON FUNCTIONS TO anon, aut
 CREATE OR REPLACE FUNCTION tests.create_supabase_user(identifier text, email text default null, phone text default null)
 RETURNS uuid
     SECURITY DEFINER
-    SET search_path = tests, auth, public, pg_temp
+    SET search_path = auth, pg_temp
 AS $$
 DECLARE
     user_id uuid;
@@ -68,19 +68,117 @@ $$ LANGUAGE plpgsql;
     * ```
  */
 CREATE OR REPLACE FUNCTION tests.get_supabase_user(identifier text)
-RETURNS uuid
+RETURNS json
 SECURITY DEFINER
-SET search_path = tests, auth, public, pg_temp
+SET search_path = auth, pg_temp
 AS $$
     DECLARE
-        supabase_user uuid;
+        supabase_user json;
     BEGIN
-        SELECT id into supabase_user FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1;
-        if supabase_user is null then
+        SELECT json_build_object('id', id, 'email', email, 'phone', phone) into supabase_user FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1;
+        if supabase_user is null OR supabase_user -> 'id' IS NULL then
             RAISE EXCEPTION 'User with identifier % not found', identifier;
         end if;
         RETURN supabase_user;
     END;
+$$ LANGUAGE plpgsql;
+
+/**
+    * ### tests.get_supabase_uid(identifier text)
+    *
+    * Returns the user UUID for a user created with `tests.create_supabase_user`.
+    *
+    * Parameters:
+    * - `identifier` - The unique identifier for the user
+    *
+    * Returns:
+    * - `user_id` - The UUID of the user in the `auth.users` table
+    *
+    * Example:
+    * ```sql
+    *   SELECT posts where posts.user_id = tests.get_supabase_uid('test_owner') -> 'id';
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.get_supabase_uid(identifier text)
+    RETURNS uuid
+    SECURITY DEFINER
+    SET search_path = auth, pg_temp
+AS $$
+DECLARE
+    supabase_user uuid;
+BEGIN
+    SELECT id into supabase_user FROM auth.users WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1;
+    if supabase_user is null then
+        RAISE EXCEPTION 'User with identifier % not found', identifier;
+    end if;
+    RETURN supabase_user;
+END;
+$$ LANGUAGE plpgsql;
+
+/**
+    * ### tests.authenticate_as(identifier text)
+    *   Authenticates as a user created with `tests.create_supabase_user`.
+    *
+    * Parameters:
+    * - `identifier` - The unique identifier for the user
+    *
+    * Returns:
+    * - `void`
+    *
+    * Example:
+    * ```sql
+    *   SELECT tests.create_supabase_user('test_owner');
+    *   SELECT tests.authenticate_as('test_owner');
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
+    RETURNS void
+    AS $$
+        DECLARE
+                user_data json;
+                original_auth_data text;
+        BEGIN
+            -- store the request.jwt.claims in a variable in case we need it
+            original_auth_data := current_setting('request.jwt.claims', true);
+            user_data := tests.get_supabase_user(identifier);
+
+            if user_data is null OR user_data ->> 'id' IS NULL then
+                RAISE EXCEPTION 'User with identifier % not found', identifier;
+            end if;
+
+
+            perform set_config('role', 'authenticated', true);
+            perform set_config('request.jwt.claims', json_build_object('sub', user_data ->> 'id', 'email', user_data ->> 'email', 'phone', user_data ->> 'phone')::text, true);
+
+        EXCEPTION
+            -- revert back to original auth data
+            WHEN OTHERS THEN
+                set local role authenticated;
+                set local "request.jwt.claims" to original_auth_data;
+                RAISE;
+        END
+    $$ LANGUAGE plpgsql;
+
+/**
+    * ### tests.clear_authentication()
+    *   Clears out the authentication and sets role to anon
+    *
+    * Returns:
+    * - `void`
+    *
+    * Example:
+    * ```sql
+    *   SELECT tests.create_supabase_user('test_owner');
+    *   SELECT tests.authenticate_as('test_owner');
+    *   SELECT tests.clear_authentication();
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.clear_authentication()
+    RETURNS void AS $$
+BEGIN
+    perform set_config('role', 'anon', true);
+    perform set_config('request.jwt.claims', null, true);
+END
 $$ LANGUAGE plpgsql;
 
 /**
@@ -143,3 +241,19 @@ RETURNS TEXT AS $$
         testing_table || 'table in the' || testing_schema || ' schema should have row level security enabled'
     );
 $$ LANGUAGE sql;
+
+-- we have to run some tests to get this to pass as the first test file.
+-- investigating options to make this better.  Maybe a dedicated test harness
+-- but we dont' want these functions to always exist on the database.
+BEGIN;
+
+    select plan(7);
+    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text'], 'uuid');
+    select function_returns('tests', 'get_supabase_uid', Array['text'], 'uuid');
+    select function_returns('tests', 'get_supabase_user', Array['text'], 'json');
+    select function_returns('tests', 'authenticate_as', Array['text'], 'void');
+    select function_returns('tests', 'clear_authentication', Array[null], 'void');
+    select function_returns('tests', 'rls_enabled', Array['text', 'text'], 'text');
+    select function_returns('tests', 'rls_enabled', Array['text'], 'text');
+    select * from finish();
+ROLLBACK;

@@ -14,10 +14,11 @@ jobs:
           SHELL: /bin/bash
       - name: Supabase Start
         run: supabase init && supabase start
-      - name: Apply supabase_test_helpers
-        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -f ./supabase_test_helpers.sql
-        env:
-          PGPASSWORD: postgres
+      - name: Move supabase_test_helpers into test path
+        run : cp ./supabase_test_helpers.sql ./tests/0000-supabase_test_helpers.sql
+#        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -f ./supabase_test_helpers.sql
+#        env:
+#          PGPASSWORD: postgres
       - name: Run Tests
         run: pg_prove -d postgres -U postgres -h localhost -p 54322 tests/*.sql
         env:

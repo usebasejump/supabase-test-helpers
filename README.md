@@ -2,9 +2,7 @@
 A collection of functions designed to make testing Supabase projects easier.
 
 ## Installation
-Copy the contents of `supabase_test_helpers.sql` into your supabase query interface and run it.
-
-Alternatively, you can generate a migration file and add it there.
+Copy the contents of `supabase_test_helpers.sql` into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run.
 
 ## Contributing
 Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
@@ -22,6 +20,9 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 
 - [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
 - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
+- [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
+- [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
+- [tests.clear_authentication()](#testsclear_authentication)
 - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
 - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
 
@@ -61,6 +62,49 @@ Returns:
 Example:
 ```sql
   SELECT posts where posts.user_id = tests.get_supabase_user('test_owner') -> 'id';
+```
+
+### tests.get_supabase_uid(identifier text)
+
+Returns the user UUID for a user created with `tests.create_supabase_user`.
+
+Parameters:
+- `identifier` - The unique identifier for the user
+
+Returns:
+- `user_id` - The UUID of the user in the `auth.users` table
+
+Example:
+```sql
+  SELECT posts where posts.user_id = tests.get_supabase_uid('test_owner') -> 'id';
+```
+
+### tests.authenticate_as(identifier text)
+  Authenticates as a user created with `tests.create_supabase_user`.
+
+Parameters:
+- `identifier` - The unique identifier for the user
+
+Returns:
+- `void`
+
+Example:
+```sql
+  SELECT tests.create_supabase_user('test_owner');
+  SELECT tests.authenticate_as('test_owner');
+```
+
+### tests.clear_authentication()
+  Clears out the authentication and sets role to anon
+
+Returns:
+- `void`
+
+Example:
+```sql
+  SELECT tests.create_supabase_user('test_owner');
+  SELECT tests.authenticate_as('test_owner');
+  SELECT tests.clear_authentication();
 ```
 
 ### tests.rls_enabled(testing_schema text)

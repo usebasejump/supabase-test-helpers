@@ -20,6 +20,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 
 - [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
 - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
+- [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
 - [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
 - [tests.clear_authentication()](#testsclear_authentication)
 - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
@@ -61,6 +62,21 @@ Returns:
 Example:
 ```sql
   SELECT posts where posts.user_id = tests.get_supabase_user('test_owner') -> 'id';
+```
+
+### tests.get_supabase_uid(identifier text)
+
+Returns the user UUID for a user created with `tests.create_supabase_user`.
+
+Parameters:
+- `identifier` - The unique identifier for the user
+
+Returns:
+- `user_id` - The UUID of the user in the `auth.users` table
+
+Example:
+```sql
+  SELECT posts where posts.user_id = tests.get_supabase_uid('test_owner') -> 'id';
 ```
 
 ### tests.authenticate_as(identifier text)

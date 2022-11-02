@@ -247,12 +247,12 @@ $$ LANGUAGE sql;
 -- but we dont' want these functions to always exist on the database.
 BEGIN;
 
-    select plan(3);
-    select function_returns('tests', 'create_supabase_user', Array['text'], 'uuid');
+    select plan(7);
+    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text'], 'uuid');
     select function_returns('tests', 'get_supabase_uid', Array['text'], 'uuid');
     select function_returns('tests', 'get_supabase_user', Array['text'], 'json');
     select function_returns('tests', 'authenticate_as', Array['text'], 'void');
-    select function_returns('tests', 'clear_authentication', Array['void'], 'void');
+    select function_returns('tests', 'clear_authentication', Array[null], 'void');
     select function_returns('tests', 'rls_enabled', Array['text', 'text'], 'text');
     select function_returns('tests', 'rls_enabled', Array['text'], 'text');
     select * from finish();

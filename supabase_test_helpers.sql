@@ -241,3 +241,19 @@ RETURNS TEXT AS $$
         testing_table || 'table in the' || testing_schema || ' schema should have row level security enabled'
     );
 $$ LANGUAGE sql;
+
+-- we have to run some tests to get this to pass as the first test file.
+-- investigating options to make this better.  Maybe a dedicated test harness
+-- but we dont' want these functions to always exist on the database.
+BEGIN;
+
+    select plan(3);
+    select function_returns('test', 'create_supabase_user', Array['text'], 'uuid');
+    select function_returns('test', 'get_supabase_uid', Array['text'], 'uuid');
+    select function_returns('test', 'get_supabase_user', Array['text'], 'json');
+    select function_returns('test', 'authenticate_as', Array['text'], 'void');
+    select function_returns('test', 'clear_authentication', Array['void'], 'void');
+    select function_returns('test', 'rls_enabled', Array['text', 'text'], 'text');
+    select function_returns('test', 'rls_enabled', Array['text'], 'text');
+    select * from finish();
+ROLLBACK;

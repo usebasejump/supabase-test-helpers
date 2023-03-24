@@ -250,7 +250,7 @@ $$ LANGUAGE sql;
 BEGIN;
 
     select plan(7);
-    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text'], 'uuid');
+    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text', 'jsonb'], 'uuid');
     select function_returns('tests', 'get_supabase_uid', Array['text'], 'uuid');
     select function_returns('tests', 'get_supabase_user', Array['text'], 'json');
     select function_returns('tests', 'authenticate_as', Array['text'], 'void');

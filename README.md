@@ -21,7 +21,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
+- [tests.create_supabase_user(identifier text, email text, phone text, metadata jsonb)](#testscreate_supabase_useridentifier-text-email-text-phone-text-metadata-jsonb)
 - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
 - [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
 - [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
@@ -33,7 +33,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 
 <!-- include: supabase_test_helpers.sql -->
 
-### tests.create_supabase_user(identifier text, email text, phone text)
+### tests.create_supabase_user(identifier text, email text, phone text, metadata jsonb)
 
 Creates a new user in the `auth.users` table.
 You can recall a user's info by using `tests.get_supabase_user(identifier text)`.
@@ -42,6 +42,7 @@ Parameters:
 - `identifier` - A unique identifier for the user. We recommend you keep it memorable like "test_owner" or "test_member"
 - `email` - (Optional) The email address of the user
 - `phone` - (Optional) The phone number of the user
+- `metadata` - (Optional) Additional metadata to be added to the user
 
 Returns:
 - `user_id` - The UUID of the user in the `auth.users` table
@@ -50,6 +51,7 @@ Example:
 ```sql
   SELECT tests.create_supabase_user('test_owner');
   SELECT tests.create_supabase_user('test_member', 'member@test.com', '555-555-5555');
+  SELECT tests.create_supabase_user('test_member', 'member@test.com', '555-555-5555', '{"key": "value"}'::jsonb);
 ```
 
 ### tests.get_supabase_user(identifier text)

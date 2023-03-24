@@ -22,6 +22,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA tests GRANT EXECUTE ON FUNCTIONS TO anon, aut
     * - `identifier` - A unique identifier for the user. We recommend you keep it memorable like "test_owner" or "test_member"
     * - `email` - (Optional) The email address of the user
     * - `phone` - (Optional) The phone number of the user
+    * - `metadata` - (Optional) Additional metadata to be added to the user
     *
     * Returns:
     * - `user_id` - The UUID of the user in the `auth.users` table
@@ -30,9 +31,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA tests GRANT EXECUTE ON FUNCTIONS TO anon, aut
     * ```sql
     *   SELECT tests.create_supabase_user('test_owner');
     *   SELECT tests.create_supabase_user('test_member', 'member@test.com', '555-555-5555');
+    *   SELECT tests.create_supabase_user('test_member', 'member@test.com', '555-555-5555', '{"key": "value"}'::jsonb);
     * ```
  */
-CREATE OR REPLACE FUNCTION tests.create_supabase_user(identifier text, email text default null, phone text default null)
+CREATE OR REPLACE FUNCTION tests.create_supabase_user(identifier text, email text default null, phone text default null, metadata jsonb default null)
 RETURNS uuid
     SECURITY DEFINER
     SET search_path = auth, pg_temp
@@ -44,7 +46,7 @@ BEGIN
     -- create the user
     user_id := extensions.uuid_generate_v4();
     INSERT INTO auth.users (id, email, phone, raw_user_meta_data)
-    VALUES (user_id, coalesce(email, concat(user_id, '@test.com')), phone, json_build_object('test_identifier', identifier))
+    VALUES (user_id, coalesce(email, concat(user_id, '@test.com')), phone, jsonb_build_object('test_identifier', identifier) || coalesce(metadata, '{}'::jsonb))
     RETURNING id INTO user_id;
 
     RETURN user_id;

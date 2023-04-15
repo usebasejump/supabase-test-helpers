@@ -8,17 +8,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: supabase/setup-cli@v1
-      - name: install pg_prove
-        run: sudo cpan TAP::Parser::SourceHandler::pgTAP
-        env:
-          SHELL: /bin/bash
       - name: Supabase Start
         run: supabase init && supabase start
-      - name: Move supabase_test_helpers into test path
-        run : cp ./supabase_test_helpers.sql ./tests/0000-supabase_test_helpers.sql
-#        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -f ./supabase_test_helpers.sql
-#        env:
-#          PGPASSWORD: postgres
+      - name: Enable pgtle
+        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -c "CREATE EXTENSION pgtle;"
+        env:
+          PGPASSWORD: postgres
+      - name: Install supabase_test_helpers extension
+        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -f ./supabase_test_helpers.sql
+        env:
+          PGPASSWORD: postgres
       - name: Run Tests
         run: pg_prove -d postgres -U postgres -h localhost -p 54322 tests/*.sql
         env:

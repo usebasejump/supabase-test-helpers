@@ -21,7 +21,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [tests.create_supabase_user(identifier text, email text, phone text, metadata jsonb)](#testscreate_supabase_useridentifier-text-email-text-phone-text-metadata-jsonb)
+- [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
 - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
 - [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
 - [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
@@ -33,7 +33,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 
 <!-- include: supabase_test_helpers.sql -->
 
-### tests.create_supabase_user(identifier text, email text, phone text, metadata jsonb)
+### tests.create_supabase_user(identifier text, email text, phone text)
 
 Creates a new user in the `auth.users` table.
 You can recall a user's info by using `tests.get_supabase_user(identifier text)`.

@@ -8,6 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: supabase/setup-cli@v1
+        with:
+          version: 1.50.4
       - name: Supabase Start
         run: supabase init && supabase start
       - name: Enable pgtle

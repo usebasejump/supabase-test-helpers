@@ -2,6 +2,16 @@
 A collection of functions designed to make testing Supabase projects easier.
 
 ## Installation
+
+### dbdev or pg_tle
+Supabase recently announced the ability to install external extensions leveraging pg_tle, or Trusted Language Extensions.  Because supabase_test_helpers is not yet part of the official repository, for now you'd need to copy the contents of `supabase_tst_helpers_pglet.sql` into your Supabase query editor and run it.  The steps are:
+
+1. Copy the contents of `supabase_tst_helpers_pglet.sql` into your Supabase query editor and run it
+2. Update your supabase/pgTAP tests to run `CREATE EXTENSION supabase_test_helpers;` inside of your test transaction, but before running any tests.  This will ensure that the test helpers are removed after your tests have run.
+
+For a basic example, check out the [example blog tests](tests/04-blog-example.sql).
+
+### Manual Installation
 Copy the contents of `supabase_test_helpers.sql` into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run.
 
 ## Writing tests

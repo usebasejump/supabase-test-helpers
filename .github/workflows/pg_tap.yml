@@ -17,7 +17,7 @@ jobs:
         env:
           PGPASSWORD: postgres
       - name: Install supabase_test_helpers extension
-        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -f ./supabase_test_helpers.sql
+        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -f ./supabase_test_helpers_pglet.sql
         env:
           PGPASSWORD: postgres
       - name: Move files into supabase tests directory

@@ -21,6 +21,6 @@ jobs:
         env:
           PGPASSWORD: postgres
       - name: Move files into supabase tests directory
-        run: mv ./tests/* ./supabase/tests/
+        run: mkdir ./supabase/tests && mv ./tests/* ./supabase/tests/
       - name: Run Tests
         run: supabase test db

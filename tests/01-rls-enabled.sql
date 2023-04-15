@@ -1,4 +1,6 @@
 BEGIN;
+    CREATE EXTENSION supabase_test_helpers;
+    
     select plan(4);
     -- create a table, which will have RLS disabled by default
     CREATE TABLE public.tb1 (id int, data text);

@@ -1,5 +1,5 @@
 BEGIN;
-
+CREATE EXTENSION supabase_test_helpers;
 select plan(12);
 
 -- create a posts table that references the auth.users table

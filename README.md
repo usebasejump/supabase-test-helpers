@@ -1,17 +1,34 @@
 # Supabase Test Helpers
 A collection of functions designed to make testing Supabase projects easier.
 
-## Installation
+## Quick Start
+If you're using Supabase, just install the test helpers as an extension.
 
-### dbdev or pg_tle
-Supabase recently announced the ability to install external extensions leveraging pg_tle, or Trusted Language Extensions.  Because supabase_test_helpers is not yet part of the official repository, for now you'd need to copy the contents of `supabase_tst_helpers_pglet.sql` into your Supabase query editor and run it.  The steps are:
+```sql
+select dbdev.install('basejump-supabase_test_helpers');
+```
 
-1. Copy the contents of `supabase_tst_helpers_pglet.sql` into your Supabase query editor and run it
-2. Update your supabase/pgTAP tests to run `CREATE EXTENSION supabase_test_helpers;` inside of your test transaction, but before running any tests.  This will ensure that the test helpers are removed after your tests have run.
+I don't recommend activating the extension in production directly, instead you can activate it as part of your test suite.  For example:
+
+```sql
+BEGIN;
+CREATE EXTENSION "basejump-supabase_test_helpers";
+
+select plan(1);
+-- create a table, which will have RLS disabled by default
+CREATE TABLE public.tb1 (id int, data text);
+ALTER TABLE public.tb1 ENABLE ROW LEVEL SECURITY;
+
+-- test to make sure RLS check works
+select check_test(tests.rls_enabled('public', 'tb1'), true);
+
+SELECT * FROM finish();
+ROLLBACK;
+```
 
 For a basic example, check out the [example blog tests](tests/04-blog-example.sql).
 
-### Manual Installation
+## Manual Installation
 Copy the contents of `supabase_test_helpers.sql` into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run.
 
 ## Writing tests

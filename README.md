@@ -1,5 +1,5 @@
 # Supabase Test Helpers
-A collection of functions designed to make testing Supabase projects easier.
+A collection of functions designed to make testing Supabase projects easier. Created as part of our [open source SaaS starter for Supabase](https://usebasejump.com).
 
 ## Quick Start
 If you're using Supabase, just install the test helpers as an extension.

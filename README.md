@@ -4,7 +4,7 @@ A collection of functions designed to make testing Supabase projects easier. Cre
 ## Quick Start
 If you're using Supabase:
 
-1) Install dbdev following the instructions here: [github.com/supabase/dbdev](github.com/supabase/dbdev)
+1) Install dbdev following the instructions here: [github.com/supabase/dbdev](https://github.com/supabase/dbdev)
 2) Install the test helpers as an extension:
 
 ```sql

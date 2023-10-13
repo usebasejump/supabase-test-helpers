@@ -29,7 +29,7 @@ SELECT * FROM finish();
 ROLLBACK;
 ```
 
-For a basic example, check out the [example blog tests](tests/04-blog-example.sql).
+For a basic example, check out the [example blog tests](https://github.com/usebasejump/supabase-test-helpers/blob/main/tests/04-blog-example.sql).
 
 ## Manual Installation (not recommended)
 Copy the contents of the most recent version into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run. for it to work, you need to create some fake tests at the bottom of the file for pgtap to not complain.  Here's an example:
@@ -53,18 +53,7 @@ ROLLBACK;
 ```
 
 ## Writing tests
-Check out the docs below for available helpers. To view a comprehensive example, check out our [blog tests](tests/04-blog-example.sql).
-
-## Contributing
-Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
-
-* Create a new version of supabase_test_helpers `supabase_test_helpers--{major}-{minor}-{patch}.sql`
-* New versions are intended to be a fresh install, so copy the contents of the previous version into the new version.
-* Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to the new version
-* Comments should be added above each function, follow the examples in the file.
-* Create a migration file `supabase_test_helpers--{oldMajor}-{oldMinor}-{oldPatch}--{newMajor}-{newMinor}-{newPatch}.sql` to upgrade to the new version. Include ONLY your migration code, not the entire contents of the new version.
-* Add tests for your functions in `tests/XX-your-function-name.sql`
-* Submit a PR
+Check out the docs below for available helpers. To view a comprehensive example, check out our [blog tests](https://github.com/usebasejump/supabase-test-helpers/blob/main/tests/04-blog-example.sql).
 
 ## Test Helpers
 The following is auto-generated off of comments in the `supabase_test_helpers--0.0.2.sql` file. Any changes added to the README directly will be overwritten.
@@ -206,4 +195,15 @@ Example:
    ROLLBACK;
 ```
 
-<!-- /include: supabase_test_helpers.sql -->
+<!-- /include: supabase_test_helpers--0.0.2.sql -->
+
+## Contributing
+Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
+
+* Create a new version of supabase_test_helpers `supabase_test_helpers--{major}-{minor}-{patch}.sql`
+* New versions are intended to be a fresh install, so copy the contents of the previous version into the new version.
+* Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to the new version
+* Comments should be added above each function, follow the examples in the file.
+* Create a migration file `supabase_test_helpers--{oldMajor}-{oldMinor}-{oldPatch}--{newMajor}-{newMinor}-{newPatch}.sql` to upgrade to the new version. Include ONLY your migration code, not the entire contents of the new version.
+* Add tests for your functions in `tests/XX-your-function-name.sql`
+* Submit a PR

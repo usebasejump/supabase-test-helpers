@@ -76,6 +76,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers--0
 - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
 - [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
 - [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
+- [tests.authenticate_as_service_role()](#testsauthenticate_as_service_role)
 - [tests.clear_authentication()](#testsclear_authentication)
 - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
 - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
@@ -148,6 +149,17 @@ Example:
 ```sql
   SELECT tests.create_supabase_user('test_owner');
   SELECT tests.authenticate_as('test_owner');
+```
+
+### tests.authenticate_as_service_role()
+  Clears authentication object and sets role to service_role.
+
+Returns:
+- `void`
+
+Example:
+```sql
+  SELECT tests.authenticate_as_service_role();
 ```
 
 ### tests.clear_authentication()

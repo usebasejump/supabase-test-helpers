@@ -4,11 +4,11 @@
 -- separate from any application data
 CREATE SCHEMA IF NOT EXISTS tests;
 
--- anon, service_role and authenticated should have access to tests schema
+-- anon, authenticated, and service_role should have access to tests schema
 GRANT USAGE ON SCHEMA tests TO anon, authenticated, service_role;
 -- Don't allow public to execute any functions in the tests schema
 ALTER DEFAULT PRIVILEGES IN SCHEMA tests REVOKE EXECUTE ON FUNCTIONS FROM public;
--- Grant execute to anon and authenticated for testing purposes
+-- Grant execute to anon, authenticated, and service_role for testing purposes
 ALTER DEFAULT PRIVILEGES IN SCHEMA tests GRANT EXECUTE ON FUNCTIONS TO anon, authenticated, service_role;
 
 /**

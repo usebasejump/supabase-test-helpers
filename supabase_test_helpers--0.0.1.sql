@@ -1,3 +1,6 @@
+-- complain if script is sourced in psql, rather than via CREATE EXTENSION
+\echo Use "CREATE EXTENSION supabase_test_helpers" to load this file. \quit
+
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
 CREATE SCHEMA IF NOT EXISTS tests;

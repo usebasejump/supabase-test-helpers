@@ -1,3 +1,6 @@
+-- complain if script is sourced in psql, rather than via CREATE EXTENSION
+\echo Use "CREATE EXTENSION supabase_test_helpers" to load this file. \quit
+
 /**
     * ### tests.authenticate_as_service_role()
     *   Clears authentication object and sets role to service_role.

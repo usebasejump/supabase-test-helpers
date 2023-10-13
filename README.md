@@ -43,7 +43,7 @@ Yes, please! Anything you've found helpful for testing Supabase projects is welc
 * Submit a PR
 
 ## Test Helpers
-The following is auto-generated off of comments in the `supabase_test_helpers.sql` file. Any changes added to the README directly will be overwritten.
+The following is auto-generated off of comments in the `supabase_test_helpers--0.0.2.sql` file. Any changes added to the README directly will be overwritten.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -58,7 +58,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers.sq
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-<!-- include: supabase_test_helpers.sql -->
+<!-- include: supabase_test_helpers--0.0.2.sql -->
 
 ### tests.create_supabase_user(identifier text, email text, phone text)
 

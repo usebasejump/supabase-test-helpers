@@ -1,9 +1,4 @@
-SELECT pgtle.install_extension
-(
- 'supabase_test_helpers',
- '0.1',
-  'pgTAP test helpers for interacting with Supabase, including RLS and Authentication',
-$_pg_tle_$
+/echo 
 
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
@@ -166,6 +161,28 @@ CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
     $$ LANGUAGE plpgsql;
 
 /**
+    * ### tests.authenticate_as_service_role()
+    *   Clears authentication object and sets role to service_role.
+    *
+    * Returns:
+    * - `void`
+    *
+    * Example:
+    * ```sql
+    *   SELECT tests.authenticate_as_service_role();
+    * ```
+ */
+CREATE OR REPLACE FUNCTION tests.authenticate_as_service_role ()
+    RETURNS void
+    AS $$
+        BEGIN
+            perform set_config('role', 'service_user', true);
+            perform set_config('request.jwt.claims', null, true);
+        END
+    $$ LANGUAGE plpgsql;
+
+
+/**
     * ### tests.clear_authentication()
     *   Clears out the authentication and sets role to anon
     *
@@ -247,6 +264,3 @@ RETURNS TEXT AS $$
         testing_table || 'table in the' || testing_schema || ' schema should have row level security enabled'
     );
 $$ LANGUAGE sql;
-
-$_pg_tle_$
-);

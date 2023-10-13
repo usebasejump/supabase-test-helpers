@@ -1,5 +1,3 @@
-/echo 
-
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
 CREATE SCHEMA IF NOT EXISTS tests;

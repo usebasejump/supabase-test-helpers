@@ -1,5 +1,3 @@
-/echo
-
 /**
     * ### tests.authenticate_as_service_role()
     *   Clears authentication object and sets role to service_role.

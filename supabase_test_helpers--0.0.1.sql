@@ -1,5 +1,5 @@
--- Enable pgTAP if it's not already enabled
-create extension if not exists pgtap with schema extensions;
+-- complain if script is sourced in psql, rather than via CREATE EXTENSION
+\echo Use "CREATE EXTENSION supabase_test_helpers" to load this file. \quit
 
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
@@ -161,6 +161,7 @@ CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
         END
     $$ LANGUAGE plpgsql;
 
+
 /**
     * ### tests.clear_authentication()
     *   Clears out the authentication and sets role to anon
@@ -243,19 +244,3 @@ RETURNS TEXT AS $$
         testing_table || 'table in the' || testing_schema || ' schema should have row level security enabled'
     );
 $$ LANGUAGE sql;
-
--- we have to run some tests to get this to pass as the first test file.
--- investigating options to make this better.  Maybe a dedicated test harness
--- but we dont' want these functions to always exist on the database.
-BEGIN;
-
-    select plan(7);
-    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text', 'jsonb'], 'uuid');
-    select function_returns('tests', 'get_supabase_uid', Array['text'], 'uuid');
-    select function_returns('tests', 'get_supabase_user', Array['text'], 'json');
-    select function_returns('tests', 'authenticate_as', Array['text'], 'void');
-    select function_returns('tests', 'clear_authentication', Array[null], 'void');
-    select function_returns('tests', 'rls_enabled', Array['text', 'text'], 'text');
-    select function_returns('tests', 'rls_enabled', Array['text'], 'text');
-    select * from finish();
-ROLLBACK;

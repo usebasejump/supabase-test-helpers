@@ -1,7 +1,7 @@
 # Supabase Test Helpers
 A collection of functions designed to make testing Supabase projects easier. Created as part of our [open source SaaS starter for Supabase](https://usebasejump.com).
 
-## Quick Start
+## Quick Start (recommended)
 If you're using Supabase:
 
 1) Install dbdev following the instructions here: [github.com/supabase/dbdev](https://github.com/supabase/dbdev)
@@ -29,39 +29,51 @@ SELECT * FROM finish();
 ROLLBACK;
 ```
 
-For a basic example, check out the [example blog tests](tests/04-blog-example.sql).
+For a basic example, check out the [example blog tests](https://github.com/usebasejump/supabase-test-helpers/blob/main/tests/04-blog-example.sql).
 
-## Manual Installation
-Copy the contents of `supabase_test_helpers.sql` into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run.
+## Manual Installation (not recommended)
+Copy the contents of the most recent version into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run. for it to work, you need to create some fake tests at the bottom of the file for pgtap to not complain.  Here's an example:
+```sql
+
+-- we have to run some tests to get this to pass as the first test file.
+-- investigating options to make this better.  Maybe a dedicated test harness
+-- but we dont' want these functions to always exist on the database.
+BEGIN;
+
+    select plan(7);
+    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text', 'jsonb'], 'uuid');
+    select function_returns('tests', 'get_supabase_uid', Array['text'], 'uuid');
+    select function_returns('tests', 'get_supabase_user', Array['text'], 'json');
+    select function_returns('tests', 'authenticate_as', Array['text'], 'void');
+    select function_returns('tests', 'clear_authentication', Array[null], 'void');
+    select function_returns('tests', 'rls_enabled', Array['text', 'text'], 'text');
+    select function_returns('tests', 'rls_enabled', Array['text'], 'text');
+    select * from finish();
+ROLLBACK;
+```
 
 ## Writing tests
-Check out the docs below for available helpers. To view a comprehensive example, check out our [blog tests](tests/04-blog-example.sql).
-
-## Contributing
-Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
-
-* Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to `supabase_test_helpers.sql`
-* Comments should be added above each function, follow the examples in the file.
-* Add tests for your functions in `tests/XX-your-function-name.sql`
-* Submit a PR
+Check out the docs below for available helpers. To view a comprehensive example, check out our [blog tests](https://github.com/usebasejump/supabase-test-helpers/blob/main/tests/04-blog-example.sql).
 
 ## Test Helpers
-The following is auto-generated off of comments in the `supabase_test_helpers.sql` file. Any changes added to the README directly will be overwritten.
+The following is auto-generated off of comments in the `supabase_test_helpers--0.0.2.sql` file. Any changes added to the README directly will be overwritten.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
-- [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
-- [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
-- [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
-- [tests.clear_authentication()](#testsclear_authentication)
-- [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
-- [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
+  - [tests.create_supabase_user(identifier text, email text, phone text)](#testscreate_supabase_useridentifier-text-email-text-phone-text)
+  - [tests.get_supabase_user(identifier text)](#testsget_supabase_useridentifier-text)
+  - [tests.get_supabase_uid(identifier text)](#testsget_supabase_uididentifier-text)
+  - [tests.authenticate_as(identifier text)](#testsauthenticate_asidentifier-text)
+  - [tests.authenticate_as_service_role()](#testsauthenticate_as_service_role)
+  - [tests.clear_authentication()](#testsclear_authentication)
+  - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
+  - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
+- [Contributing](#contributing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-<!-- include: supabase_test_helpers.sql -->
+<!-- include: supabase_test_helpers--0.0.2.sql -->
 
 ### tests.create_supabase_user(identifier text, email text, phone text)
 
@@ -129,6 +141,17 @@ Example:
   SELECT tests.authenticate_as('test_owner');
 ```
 
+### tests.authenticate_as_service_role()
+  Clears authentication object and sets role to service_role.
+
+Returns:
+- `void`
+
+Example:
+```sql
+  SELECT tests.authenticate_as_service_role();
+```
+
 ### tests.clear_authentication()
   Clears out the authentication and sets role to anon
 
@@ -173,4 +196,15 @@ Example:
    ROLLBACK;
 ```
 
-<!-- /include: supabase_test_helpers.sql -->
+<!-- /include: supabase_test_helpers--0.0.2.sql -->
+
+## Contributing
+Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
+
+* Create a new version of supabase_test_helpers `supabase_test_helpers--{major}-{minor}-{patch}.sql`
+* New versions are intended to be a fresh install, so copy the contents of the previous version into the new version.
+* Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to the new version
+* Comments should be added above each function, follow the examples in the file.
+* Create a migration file `supabase_test_helpers--{oldMajor}-{oldMinor}-{oldPatch}--{newMajor}-{newMinor}-{newPatch}.sql` to upgrade to the new version. Include ONLY your migration code, not the entire contents of the new version.
+* Add tests for your functions in `tests/XX-your-function-name.sql`
+* Submit a PR

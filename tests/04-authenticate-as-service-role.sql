@@ -1,7 +1,7 @@
 BEGIN;
 CREATE EXTENSION supabase_test_helpers;
 
-select plan(7);
+select plan(8);
 
 select tests.create_supabase_user('test');
 

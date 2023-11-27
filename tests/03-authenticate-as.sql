@@ -21,7 +21,7 @@ select is((select current_role::text), 'anon', 'Sets the current role to anonymo
 select is((select auth.uid()), null, 'Clears out authentication');
 select is(
 	current_setting('request.jwt.claims'), 
-	null, 
+	'', 
 	'Empties request claims'
 	);
 

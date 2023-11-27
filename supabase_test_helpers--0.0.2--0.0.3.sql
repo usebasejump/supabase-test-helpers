@@ -89,3 +89,45 @@ CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
                 RAISE;
         END
     $$ LANGUAGE plpgsql;
+
+
+/**
+    * ### tests.get_supabase_user(identifier text)
+    *
+    * Returns the user info for a user created with `tests.create_supabase_user`.
+    *
+    * Parameters:
+    * - `identifier` - The unique identifier for the user
+    *
+    * Returns:
+    * - `user_id` - The UUID of the user in the `auth.users` table
+    *
+    * Example:
+    * ```sql
+    *   SELECT posts where posts.user_id = tests.get_supabase_user('test_owner') -> 'id';
+    * ```
+*/
+CREATE OR REPLACE FUNCTION tests.get_supabase_user(identifier text)
+RETURNS json
+SECURITY DEFINER
+SET search_path = auth, pg_temp
+AS $$
+    DECLARE
+        supabase_user json;
+    BEGIN
+        SELECT json_build_object(
+        'id', id,
+        'email', email,
+        'phone', phone,
+        'raw_user_meta_data', raw_user_meta_data,
+        'raw_app_meta_data', raw_app_meta_data
+        ) into supabase_user
+        FROM auth.users
+        WHERE raw_user_meta_data ->> 'test_identifier' = identifier limit 1;
+        
+        if supabase_user is null OR supabase_user -> 'id' IS NULL then
+            RAISE EXCEPTION 'User with identifier % not found', identifier;
+        end if;
+        RETURN supabase_user;
+    END;
+$$ LANGUAGE plpgsql;

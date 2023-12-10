@@ -4,7 +4,7 @@ BEGIN;
 -- right now it always installs the FIRST version of the extension
 CREATE EXTENSION supabase_test_helpers version '0.0.4';
 
-select plan(16);
+select plan(18);
 
 -- test creating a user
 select tests.create_supabase_user('testuser');
@@ -17,6 +17,8 @@ select is((select count(*)::integer from auth.users), 4, 'create_supabase_user s
 select is((select tests.get_supabase_uid('testuser')), (select id from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser'), 'get_supabase_uid should return a user');
 select is((select (tests.get_supabase_user('testuser') ->> 'id')::uuid), (select id from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser'), 'get_supabase_user should return a user id');
 select is(auth.users.raw_app_meta_data, '{}'::jsonb, 'raw_app_meta_data should not be null') from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser';
+select ok((select auth.users.created_at IS NOT NULL), 'created_at should not be null') from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser';
+select ok((select auth.users.updated_at IS NOT NULL), 'updated_at should not be null') from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser';
 select is((select tests.get_supabase_user('testuser2') ->> 'email'), (select email::text from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser2'), 'get_supabase_user should return a user email');
 select is((select tests.get_supabase_user('testuser3') ->> 'phone'), (select phone::text from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser3'), 'get_supabase_user should return a user phone');
 select is((select tests.get_supabase_user('testuser4') -> 'raw_user_meta_data' ->> 'has'), (select raw_user_meta_data ->> 'has' from auth.users where raw_user_meta_data ->> 'test_identifier' = 'testuser4'), 'get_supabase_user should return custom metadata');

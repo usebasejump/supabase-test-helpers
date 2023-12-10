@@ -69,6 +69,8 @@ The following is auto-generated off of comments in the `supabase_test_helpers--0
   - [tests.clear_authentication()](#testsclear_authentication)
   - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
   - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
+  - [tests.freeze_time(frozen_time timestamp with time zone)](#testsfreeze_timefrozen_time-timestamp-with-time-zone)
+  - [tests.unfreeze_time()](#testsunfreeze_time)
 - [Contributing](#contributing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -194,6 +196,33 @@ Example:
        select tests.rls_enabled('public', 'accounts');
        SELECT * FROM finish();
    ROLLBACK;
+```
+
+### tests.freeze_time(frozen_time timestamp with time zone)
+
+Overwrites the current time from now() to the provided time.
+
+Parameters:
+- `frozen_time` - The time to freeze to. Supports timestamp with time zone, without time zone, date or any other value that can be coerced into a timestamp with time zone.
+
+Returns:
+- void
+
+Example:
+```sql
+  SELECT tests.freeze_time('2020-01-01 00:00:00');
+```
+
+### tests.unfreeze_time()
+
+Unfreezes the time and restores the original now() function.
+
+Returns:
+- void
+
+Example:
+```sql
+  SELECT tests.unfreeze_time();
 ```
 
 <!-- /include: supabase_test_helpers--0.0.4.sql -->

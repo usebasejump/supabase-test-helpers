@@ -1,5 +1,9 @@
 BEGIN;
-CREATE EXTENSION supabase_test_helpers;
+-- TODO: For now you have to specify the version due to a bug in pg_tle
+-- this should be changed to remove the version once the bug is fixed
+-- right now it always installs the FIRST version of the extension
+CREATE EXTENSION supabase_test_helpers version '0.0.4';
+
 select plan(12);
 
 -- create a posts table that references the auth.users table

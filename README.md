@@ -73,7 +73,7 @@ The following is auto-generated off of comments in the `supabase_test_helpers--0
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-<!-- include: supabase_test_helpers--0.0.2.sql -->
+<!-- include: supabase_test_helpers--0.0.4.sql -->
 
 ### tests.create_supabase_user(identifier text, email text, phone text)
 
@@ -196,7 +196,7 @@ Example:
    ROLLBACK;
 ```
 
-<!-- /include: supabase_test_helpers--0.0.2.sql -->
+<!-- /include: supabase_test_helpers--0.0.4.sql -->
 
 ## Contributing
 Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
@@ -206,5 +206,8 @@ Yes, please! Anything you've found helpful for testing Supabase projects is welc
 * Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to the new version
 * Comments should be added above each function, follow the examples in the file.
 * Create a migration file `supabase_test_helpers--{oldMajor}-{oldMinor}-{oldPatch}--{newMajor}-{newMinor}-{newPatch}.sql` to upgrade to the new version. Include ONLY your migration code, not the entire contents of the new version.
-* Add tests for your functions in `tests/XX-your-function-name.sql`
+* Add tests for your functions in `supabase/tests/XX-your-function-name.sql`
+* You can verify tests work by running `supabase init` to create a config file, `supabase start` to launch it 
+* Install your updated version with `dbdev install --connection postgres://postgres:postgres@localhost:54322/postgres --path .`
+* Run `supabase test db` to run the tests.
 * Submit a PR

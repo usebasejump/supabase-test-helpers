@@ -1,3 +1,6 @@
 .idea
 .DS_Store
 supabase_test_helpers_pglet.sql
+supabase/config.toml
+supabase/functions
+supabase/seed.sql

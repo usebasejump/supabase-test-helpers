@@ -19,10 +19,6 @@ jobs:
           version: latest
       - name: Supabase Start
         run: supabase init && supabase start
-      - name: Enable pgtle
-        run: psql -v ON_ERROR_STOP=1 -U postgres -d postgres -h localhost -p 54322 -c "CREATE EXTENSION pg_tle;"
-        env:
-          PGPASSWORD: postgres
       - name: Install supabase_test_helpers extension using dbdev cli
         run: dbdev install --connection postgres://postgres:postgres@localhost:54322/postgres --path .
       - name: Run Tests

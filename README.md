@@ -69,11 +69,13 @@ The following is auto-generated off of comments in the `supabase_test_helpers--0
   - [tests.clear_authentication()](#testsclear_authentication)
   - [tests.rls_enabled(testing_schema text)](#testsrls_enabledtesting_schema-text)
   - [tests.rls_enabled(testing_schema text, testing_table text)](#testsrls_enabledtesting_schema-text-testing_table-text)
+  - [tests.freeze_time(frozen_time timestamp with time zone)](#testsfreeze_timefrozen_time-timestamp-with-time-zone)
+  - [tests.unfreeze_time()](#testsunfreeze_time)
 - [Contributing](#contributing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-<!-- include: supabase_test_helpers--0.0.2.sql -->
+<!-- include: supabase_test_helpers--0.0.4.sql -->
 
 ### tests.create_supabase_user(identifier text, email text, phone text)
 
@@ -196,7 +198,43 @@ Example:
    ROLLBACK;
 ```
 
-<!-- /include: supabase_test_helpers--0.0.2.sql -->
+### tests.freeze_time(frozen_time timestamp with time zone)
+
+Overwrites the current time from now() to the provided time.
+
+Works out of the box for any normal usage of now(), if you have a function that sets its own search path, such as security definers, then you will need to alter the function to set the search path to include test_overrides BEFORE pg_catalog.
+**ONLY do this inside of a pgtap test transaction.**
+Example:
+
+```sql
+ALTER FUNCTION auth.your_function() SET search_path = test_overrides, public, pg_temp, pg_catalog;
+```
+View a test example in 05-frozen-time.sql: https://github.com/usebasejump/supabase-test-helpers/blob/main/supabase/tests/05-frozen-time.sql
+
+Parameters:
+- `frozen_time` - The time to freeze to. Supports timestamp with time zone, without time zone, date or any other value that can be coerced into a timestamp with time zone.
+
+Returns:
+- void
+
+Example:
+```sql
+  SELECT tests.freeze_time('2020-01-01 00:00:00');
+```
+
+### tests.unfreeze_time()
+
+Unfreezes the time and restores the original now() function.
+
+Returns:
+- void
+
+Example:
+```sql
+  SELECT tests.unfreeze_time();
+```
+
+<!-- /include: supabase_test_helpers--0.0.4.sql -->
 
 ## Contributing
 Yes, please! Anything you've found helpful for testing Supabase projects is welcome. To contribute:
@@ -206,5 +244,8 @@ Yes, please! Anything you've found helpful for testing Supabase projects is welc
 * Add [pgTAP compliant test functions](https://pgtap.org/documentation.html#composeyourself) to the new version
 * Comments should be added above each function, follow the examples in the file.
 * Create a migration file `supabase_test_helpers--{oldMajor}-{oldMinor}-{oldPatch}--{newMajor}-{newMinor}-{newPatch}.sql` to upgrade to the new version. Include ONLY your migration code, not the entire contents of the new version.
-* Add tests for your functions in `tests/XX-your-function-name.sql`
+* Add tests for your functions in `supabase/tests/XX-your-function-name.sql`
+* You can verify tests work by running `supabase init` to create a config file, `supabase start` to launch it 
+* Install your updated version with `dbdev install --connection postgres://postgres:postgres@localhost:54322/postgres --path .`
+* Run `supabase test db` to run the tests.
 * Submit a PR

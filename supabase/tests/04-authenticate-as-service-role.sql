@@ -1,4 +1,5 @@
 BEGIN;
+
 CREATE EXTENSION supabase_test_helpers;
 
 select plan(8);

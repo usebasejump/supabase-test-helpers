@@ -311,6 +311,11 @@ $$ LANGUAGE plpgsql;
     *
     * Overwrites the current time from now() to the provided time.
     *
+    * Works out of the box for any normal usage of now(), if you have a function that sets its own search path, such as security definers,
+    * then you will need to alter the function to set the search path to include test_overrides BEFORE pg_catalog. ONLY do this inside of a pgtap test transaction,
+    * Example: ALTER FUNCTION auth.your_function() SET search_path = test_overrides, public, pg_temp, pg_catalog;
+    * View a test example in 05-frozen-time.sql: https://github.com/usebasejump/supabase-test-helpers/blob/main/supabase/tests/05-frozen-time.sql
+    *
     * Parameters:
     * - `frozen_time` - The time to freeze to. Supports timestamp with time zone, without time zone, date or any other value that can be coerced into a timestamp with time zone.
     *

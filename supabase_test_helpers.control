@@ -1,4 +1,4 @@
-default_version = 0.0.4
+default_version = 0.0.5
 comment = 'A collection of functions designed to make testing Supabase projects easier'
 relocatable = false
 requires = pgtap

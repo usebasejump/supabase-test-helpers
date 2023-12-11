@@ -11,7 +11,7 @@ SET search_path = public, pg_catalog;
 BEGIN;
     CREATE EXTENSION supabase_test_helpers;
     
-    select plan(11);
+    select plan(12);
 
     -- freeze the time
     SELECT tests.freeze_time('2020-01-01 00:00:00');
@@ -31,7 +31,7 @@ BEGIN;
 
 
     -- create a test table to verify that now() is overwritten on tables
-    CREATE TABLE test_table (
+    CREATE TABLE public.test_table (
         id int, 
         key text,
         created_at timestamp with time zone default now(),
@@ -129,6 +129,26 @@ BEGIN;
         (SELECT search_path_setting_function()),
         '2020-01-01 00:00:00'::timestamp with time zone,
         'function returns the frozen time'
+    );
+
+
+    select tests.unfreeze_time();
+
+    -- working with an authenticated user freezing time.
+
+    select tests.create_supabase_user('test');
+    select tests.authenticate_as('test');
+
+    -- freeze time
+    SELECT tests.freeze_time('2020-05-05 00:00:00');
+
+    -- verify frozen time by creating a table row
+    insert into test_table (id, key) values (2, 'test2');
+
+    select is(
+        (SELECT created_at FROM test_table WHERE id = 2),
+        '2020-05-05 00:00:00'::timestamp with time zone,
+        'created_at is frozen in time'
     );
 
     SELECT * FROM finish();

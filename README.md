@@ -29,7 +29,7 @@ SELECT * FROM finish();
 ROLLBACK;
 ```
 
-For a basic example, check out the [example blog tests](https://github.com/usebasejump/supabase-test-helpers/blob/main/tests/04-blog-example.sql).
+For a basic example, check out the [example blog tests](https://github.com/usebasejump/supabase-test-helpers/blob/main/supabase/tests/04-blog-example.sql).
 
 ## Manual Installation (not recommended)
 Copy the contents of the most recent version into the very first alphabetical test in your test suite, such as `00000-supabase_test_helpers.sql`. This will ensure that the test helpers are removed after your tests have run. for it to work, you need to create some fake tests at the bottom of the file for pgtap to not complain.  Here's an example:

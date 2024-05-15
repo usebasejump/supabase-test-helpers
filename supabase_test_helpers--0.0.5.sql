@@ -176,7 +176,9 @@ CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
                 'email', user_data ->> 'email', 
                 'phone', user_data ->> 'phone', 
                 'user_metadata', user_data -> 'raw_user_meta_data', 
-                'app_metadata', user_data -> 'raw_app_meta_data'
+                'app_metadata', user_data -> 'raw_app_meta_data',
+                'aal', 'aal1',
+                'amr', json_build_array(json_build_object('method', 'password', 'timestamp', extract(epoch from now())::integer))
             )::text, true);
 
         EXCEPTION
